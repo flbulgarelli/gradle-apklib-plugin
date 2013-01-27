@@ -1,6 +1,6 @@
 import org.ajoberstar.gradle.git.tasks.*
 
-def apkLibs = [lib1: 'https://github.com/ajoberstar/gradle-git.git'] 
+def apkLibs = [Lib1: 'https://github.com/ajoberstar/gradle-git.git', Lib2: 'https://github.com/flbulgarelli/gradle-apklib-plugin.git' ] 
 def apkLibsDir = "apklibs"
 
 //TODO 
@@ -9,27 +9,29 @@ task cleanApkLibs << {
 }
 
 //Step 1: download sources
-tasks.addRule("Pattern: downloadApkLibs") { 
-   apkLibs.each { name, url ->
-    task("downloadApkLib$name", type: GitClone) {
-        def destination = file("./$apkLibsDir/$name")
-        uri = url
+tasks.addRule("downloadApkLib") { String taskName ->
+  if(taskName.startsWith("downloadApkLib")) {
+    def targetLib = taskName - "downloadApkLib"
+    task(taskName, type: GitClone) {
+        def destination = file("./$apkLibsDir/$targetLib")
+        uri = apkLibs[targetLib]
         destinationPath = destination
         bare = false
         enabled = !destination.exists() 
     }
-   }
+  }
 }
 
 
 //step 2: add to .gitignore?
-task << ignoreApkLibs
+task  ignoreApkLibs << {}
 
 //Step 3: Create .gradle for each one
-task createApkLibGradles(dependsOn: downloadApkLibs) << {
+task createApkLibGradles {
 
+//   dependsOn (apkLibs.collect { k, v -> "downloadApkLib${k.capitalize()}" })
+     dependsOn  downloadApkLibLib1, downloadApkLibLib2
 }
-
 //Step 4?: dd dependencies
 
 
