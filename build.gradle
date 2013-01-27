@@ -5,8 +5,8 @@ def apkLibsDir = "apklibs"
 
 
 //TODO 
-task cleanApkLibs << {
-
+task cleanApkLibs(type: Delete) << {
+  delete apkLibsDir 
 }
 
 //Step 1: download sources
