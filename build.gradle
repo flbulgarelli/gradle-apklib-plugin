@@ -3,6 +3,7 @@ import org.ajoberstar.gradle.git.tasks.*
 def apkLibs = [Lib1: 'https://github.com/ajoberstar/gradle-git.git', Lib2: 'https://github.com/flbulgarelli/gradle-apklib-plugin.git' ] 
 def apkLibsDir = "apklibs"
 
+
 //TODO 
 task cleanApkLibs << {
 
@@ -27,10 +28,8 @@ tasks.addRule("downloadApkLib") { String taskName ->
 task  ignoreApkLibs << {}
 
 //Step 3: Create .gradle for each one
-task createApkLibGradles {
+task createApkLibGradles(dependsOn: apkLibs.collect { k, v -> getProperty("downloadApkLib${k}") }) << {
 
-//   dependsOn (apkLibs.collect { k, v -> "downloadApkLib${k.capitalize()}" })
-     dependsOn  downloadApkLibLib1, downloadApkLibLib2
 }
 //Step 4?: dd dependencies
 
