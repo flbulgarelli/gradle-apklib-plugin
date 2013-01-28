@@ -1,6 +1,12 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
 import org.ajoberstar.gradle.git.tasks.*
 
-def apkLibs = [Lib1: 'https://github.com/ajoberstar/gradle-git.git', Lib2: 'https://github.com/flbulgarelli/gradle-apklib-plugin.git' ] 
+/*def apkLibs = [
+  Lib1: 'https://github.com/ajoberstar/gradle-git.git',
+  Lib2: 'https://github.com/flbulgarelli/gradle-apklib-plugin.git',
+]*/ 
 def apkLibsDir = "apklibs"
 def apkLibsNames = apkLibs.keySet()
 
@@ -27,20 +33,23 @@ tasks.addRule("downloadApkLib") { String taskName ->
 task  ignoreApkLibs << {}
 
 //Create .gradle for each one
-task createApkLibGradles(dependsOn: apkLibsNames.collect { lib -> getProperty("downloadApkLib${lib}") }) << {
+task downloadAllApkLibs(dependsOn: apkLibsNames.collect { lib -> getProperty("downloadApkLib${lib}") }) << {}
 
+sourceSets {
+  main {
+    apkLibsNames.each {
+      def baseDir = "$apkLibsDir/$it/"
+      java {
+        srcDirs "$baseDir/src/main/java", "$baseDir/library/src"
+      }
+      resources {
+        srcDir "$apkLibsDir/$it/res"
+      }
+    }
+  }
 }
-
-dependencies {
-   apkLibsNames.each { lib ->
-     compile project(":apklibs:${lib}")
-   }
-}
-
 
 buildscript {
   repositories { mavenCentral() }
   dependencies { classpath 'org.ajoberstar:gradle-git:0.2.3' }
 }
-
- 
