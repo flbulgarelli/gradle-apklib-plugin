@@ -1,2 +1,5 @@
 apklibs/**
 .gradle/**
+.classpath
+.project
+.settings
